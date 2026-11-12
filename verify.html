@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Verify a Certificate - CCC Formation Centre</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#0b0c14;color:#e9e3d2;font-family:'EB Garamond',Georgia,serif;display:flex;align-items:flex-start;justify-content:center;padding:6vh 16px}
+.wrap{width:100%;max-width:560px}
+.brand{text-align:center;margin-bottom:26px}
+.brand .a{font:700 22px Cinzel,Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:#d9b45a}
+.brand .b{font:400 10px Cinzel,Georgia,serif;letter-spacing:.3em;text-transform:uppercase;color:rgba(217,180,90,.6);margin-top:4px}
+.card{background:#14151f;border:1px solid rgba(201,168,76,.28);border-radius:14px;padding:26px;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(to right,transparent,#c9a84c,transparent)}
+h1{font:600 15px Cinzel,Georgia,serif;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-bottom:6px}
+p.s{font-size:16px;color:rgba(233,227,210,.7);line-height:1.6;margin-bottom:18px}
+label{display:block;font:400 10px Cinzel,Georgia,serif;letter-spacing:.2em;text-transform:uppercase;color:#d9b45a;margin-bottom:6px}
+input{width:100%;background:#1b1c29;border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:13px 14px;color:#fff;font:600 17px Cinzel,Georgia,serif;letter-spacing:.08em;text-transform:uppercase;outline:none}
+input:focus{border-color:#d9b45a}
+button{margin-top:14px;width:100%;border:0;border-radius:8px;padding:13px;background:linear-gradient(135deg,#b8862a,#e8c87a);color:#1a1000;font:700 12px Cinzel,Georgia,serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+button:disabled{opacity:.6;cursor:wait}
+#out{margin-top:22px}
+.res{border-radius:10px;padding:18px;border:1px solid}
+.ok{background:rgba(60,160,110,.1);border-color:rgba(90,200,140,.45)}
+.bad{background:rgba(200,70,70,.1);border-color:rgba(230,110,110,.45)}
+.warn{background:rgba(220,160,50,.1);border-color:rgba(230,180,80,.5)}
+.res .t{font:700 14px Cinzel,Georgia,serif;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.ok .t{color:#6fdca4}.bad .t{color:#ff8c8c}.warn .t{color:#f0c060}
+dl{display:grid;grid-template-columns:120px 1fr;gap:9px 12px;font-size:17px}
+dt{font:400 9.5px Cinzel,Georgia,serif;letter-spacing:.16em;text-transform:uppercase;color:rgba(233,227,210,.55);padding-top:5px}
+dd{color:#fff}
+.note{margin-top:18px;font-size:14px;color:rgba(233,227,210,.55);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="a">CCC Formation Centre&reg;</div><div class="b">Renew &middot; Form &middot; Transform</div></div>
+  <div class="card">
+    <h1>Verify a certificate</h1>
+    <p class="s">Enter the certificate number printed at the bottom of the certificate to check that it was genuinely issued by CCC Formation Centre.</p>
+    <label for="num">Certificate number</label>
+    <input id="num" type="text" placeholder="CCC-2026-XXXX-XXXX" autocomplete="off" spellcheck="false" maxlength="40">
+    <button id="go" type="button">Verify</button>
+    <div id="out" aria-live="polite"></div>
+  </div>
+  <p class="note">A match confirms that a certificate with this number was issued. Please check that the name and course shown here are the same as on the certificate you were given.</p>
+</div>
+<script>
+var SUPABASE_URL='https://sylkovghcyeixpapalcz.supabase.co';
+var SUPABASE_KEY='sb_publishable_6fIHSJnWrLrmkbIX6LhOHg_eYfx37vZ';
+var COURSE_TITLES={"tl-foundation": "Forgiveness: Clearing the Ground", "tl-renewal": "Renewal: Restoring the Inner Life", "tl-formation": "Formation: Christlike Character", "tl-transformation": "Transformation: Becoming Conformed", "tl-expression": "Kingdom Expression: Transformed to Serve", "new-heart-journey": "The New Heart Journey", "innerrenewal": "Inner Renewal & Spiritual Formation", "renewing-mind": "Renewing the Mind Masterclass", "trauma-healing": "Certificate in Trauma Recovery & Biblical Care", "generational-sin": "Breaking Generational Sin", "bloodline": "Cleansing the Bloodline", "gospel-nations": "Taking the Gospel to the Nations", "kingdom-leadership": "Kingdom Leadership Training", "biblical-counselling": "Biblical Counselling Essentials", "discipleship-foundation": "Discipleship Training Foundation", "how-to-forgive": "How to Forgive Without Losing Yourself", "motivational-speaker-pain": "Motivational Speaker Called Pain", "generational-curses": "Breaking Generational Curses"};
+
+function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;}
+function show(kind,title,rows,msg){
+  var out=document.getElementById('out');out.textContent='';
+  var box=el('div','res '+kind);box.appendChild(el('div','t',title));
+  if(msg){box.appendChild(el('p','',msg));box.lastChild.style.fontSize='16px';}
+  if(rows){var dl=el('dl');rows.forEach(function(r){dl.appendChild(el('dt','',r[0]));dl.appendChild(el('dd','',r[1]));});box.appendChild(dl);}
+  out.appendChild(box);
+}
+function prettyCourse(id){
+  if(COURSE_TITLES[id])return COURSE_TITLES[id];
+  return String(id||'').replace(/[-_]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+}
+async function verify(raw){
+  var num=String(raw||'').trim().toUpperCase();
+  if(!/^[A-Z0-9-]{8,40}$/.test(num)){show('bad','Not a valid number',null,'Please type the certificate number exactly as printed, for example CCC-2026-XXXX-XXXX.');return;}
+  var btn=document.getElementById('go');btn.disabled=true;btn.textContent='Checking...';
+  try{
+    var r=await fetch(SUPABASE_URL+'/rest/v1/rpc/verify_certificate',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_number:num})});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    var d=await r.json();
+    if(!d||!d.found){show('bad','No certificate found',null,'We could not find a certificate with the number '+num+'. Please check the number and try again. If it is correct, the certificate may not be genuine.');}
+    else if(d.revoked){show('warn','Certificate revoked',[['Certificate no.',d.number],['Name',d.holder||'-'],['Course',prettyCourse(d.course_id)]],'This certificate was issued but has since been withdrawn by CCC Formation Centre and is no longer valid.');}
+    else{
+      var when=d.issued_at?new Date(d.issued_at).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'-';
+      show('ok','Genuine certificate',[['Certificate no.',d.number],['Awarded to',d.holder||'-'],['Course',prettyCourse(d.course_id)],['Issued',when],['Issued by','CCC Formation Centre']]);
+    }
+  }catch(e){show('warn','Could not check right now',null,'We could not reach the verification service. Please check your connection and try again.');}
+  btn.disabled=false;btn.textContent='Verify';
+}
+document.getElementById('go').addEventListener('click',function(){var v=document.getElementById('num').value;try{history.replaceState(null,'','?c='+encodeURIComponent(v.trim()));}catch(e){}verify(v);});
+document.getElementById('num').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('go').click();});
+(function(){var c=new URLSearchParams(location.search).get('c');if(c){document.getElementById('num').value=c;verify(c);}})();
+</script>
+</body>
+</html>
